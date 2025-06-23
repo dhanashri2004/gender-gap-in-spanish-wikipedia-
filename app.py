@@ -5,12 +5,14 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from streamlit_option_menu import option_menu
 
+# === Streamlit Page Config ===
 st.set_page_config(page_title="Gender Predictor", layout="centered")
 
-# === Load model and encoder ===
+# === Load model and encoders ===
 try:
     model = joblib.load('model.pkl')
     c_api_encoder = joblib.load('c_api_encoder.pkl')
+    label_encoder = joblib.load('label_encoder.pkl')  # For decoding prediction
 except Exception as e:
     st.error(f"⚠️ Failed to load model or encoder: {e}")
     st.stop()
@@ -97,6 +99,7 @@ elif selected == "Predict Gender":
             submit_btn = st.form_submit_button("Predict")
 
         if submit_btn:
+            # Encode input features
             encoded_api = c_api_encoder.transform([c_api])[0]
             input_data = pd.DataFrame(
                 [[encoded_api, c_man, e_neds, e_bpag, neds, ndays, nactdays,
@@ -107,11 +110,16 @@ elif selected == "Predict Gender":
                          "ns_user", "ns_wikipedia", "ns_talk", "ns_userTalk", "ns_content",
                          "weightIJ", "NIJ"]
             )
+
             st.write("📤 Input data:")
             st.dataframe(input_data)
 
+            # Predict and decode
             prediction = model.predict(input_data)[0]
-            st.success(f"🧠 Predicted Gender: `{prediction}`")
+            decoded_gender = label_encoder.inverse_transform([prediction])[0]
+
+            # Display result
+            st.success(f"🧠 Predicted Gender: **{decoded_gender}**")
 
     except Exception as e:
         st.error(f"⚠️ Prediction failed: {e}")
