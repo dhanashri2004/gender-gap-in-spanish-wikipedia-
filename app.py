@@ -16,11 +16,13 @@ except Exception as e:
     st.stop()
 
 # === Load dataset if available ===
+# === Load dataset if available ===
 try:
-    df = pd.read_csv(r"C:\Users\Kimaya\Desktop\Dhanashree\Spanish-Wikipedia-main\Spanish-Wikipedia-main\data.csv")
+    df = pd.read_csv("data.csv")  # <-- this line loads your dataset
 except Exception as e:
-    st.warning("⚠️ Dataset not loaded. You can still use prediction.")
+    st.warning(" Dataset not loaded. You can still use prediction.")
     df = None
+
 
 # === Sidebar Menu ===
 with st.sidebar:
