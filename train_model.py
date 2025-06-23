@@ -1,32 +1,37 @@
-# train_model.py
 import pandas as pd
+from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.preprocessing import LabelEncoder
-from sklearn.metrics import accuracy_score
 import joblib
 
-# Load data
-df = pd.read_csv('data.csv')
-df = df.drop(columns=['firstDay', 'lastDay'])
+# === 1. Load dataset ===
+df = pd.read_csv("data.csv")
 
-# Encode C_api
-label_enc = LabelEncoder()
-df['C_api'] = label_enc.fit_transform(df['C_api'])
+# === 2. Encode categorical features ===
+c_api_encoder = LabelEncoder()
+df["C_api"] = c_api_encoder.fit_transform(df["C_api"])
+joblib.dump(c_api_encoder, "c_api_encoder.pkl")
 
-# Train/test split
-X = df.drop(columns=['gender'])
-y = df['gender']
+# === 3. Encode the label ===
+label_encoder = LabelEncoder()
+y = label_encoder.fit_transform(df["gender"])
+joblib.dump(label_encoder, "label_encoder.pkl")  # ✅ Save label encoder
 
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
-)
+# === 4. Prepare feature columns ===
+X = df.drop(columns=["gender"])  # Drop target
+X = X[["C_api", "C_man", "E_NEds", "E_Bpag", "NEds", "NDays", "NActDays",
+       "NPages", "NPcreated", "pagesWomen", "wikiprojWomen",
+       "ns_user", "ns_wikipedia", "ns_talk", "ns_userTalk",
+       "ns_content", "weightIJ", "NIJ"]]  # Columns used for training
 
-# Train model
-model = RandomForestClassifier(n_estimators=100, random_state=42)
+# === 5. Train/test split ===
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# === 6. Train model ===
+model = RandomForestClassifier()
 model.fit(X_train, y_train)
 
-# Save model & encoder
-joblib.dump(model, 'model.pkl')
-joblib.dump(label_enc, 'c_api_encoder.pkl')
-print('Model saved. Accuracy:', accuracy_score(y_test, model.predict(X_test)))
+# === 7. Save the model ===
+joblib.dump(model, "model.pkl")
+
+print("✅ Model and encoders saved.")
