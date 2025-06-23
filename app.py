@@ -80,14 +80,34 @@ elif selected == "Predict Gender":
             c_man = st.number_input("C_man", min_value=0)
             e_bpag = st.number_input("E_Bpag", min_value=0)
             e_neds = st.number_input("E_NEds", min_value=0)
+            first_day = st.number_input("firstDay", min_value=0)
+            last_day = st.number_input("lastDay", min_value=0)
+            neds = st.number_input("NEds", min_value=0)
+            ndays = st.number_input("NDays", min_value=0)
             nactdays = st.number_input("NActDays", min_value=0)
+            npages = st.number_input("NPages", min_value=0)
+            npcreated = st.number_input("NPcreated", min_value=0)
+            pages_women = st.number_input("pagesWomen", min_value=0)
+            wikiproj_women = st.number_input("wikiprojWomen", min_value=0)
+            ns_user = st.number_input("ns_user", min_value=0)
+            ns_wikipedia = st.number_input("ns_wikipedia", min_value=0)
+            ns_talk = st.number_input("ns_talk", min_value=0)
+            ns_user_talk = st.number_input("ns_userTalk", min_value=0)
+            ns_content = st.number_input("ns_content", min_value=0)
+            weight_ij = st.number_input("weightIJ", min_value=0.0)
+            nij = st.number_input("NIJ", min_value=0)
+
             submit_btn = st.form_submit_button("Predict")
 
         if submit_btn:
             encoded_api = c_api_encoder.transform([c_api])[0]
             input_data = pd.DataFrame(
-                [[encoded_api, c_man, e_bpag, e_neds, nactdays]],
-                columns=["C_api", "C_man", "E_Bpag", "E_NEds", "NActDays"]
+                [[encoded_api, c_man, e_neds, e_bpag, first_day, last_day, neds, ndays, nactdays,
+                  npages, npcreated, pages_women, wikiproj_women, ns_user, ns_wikipedia,
+                  ns_talk, ns_user_talk, ns_content, weight_ij, nij]],
+                columns=["C_api", "C_man", "E_NEds", "E_Bpag", "firstDay", "lastDay", "NEds", "NDays",
+                         "NActDays", "NPages", "NPcreated", "pagesWomen", "wikiprojWomen", "ns_user",
+                         "ns_wikipedia", "ns_talk", "ns_userTalk", "ns_content", "weightIJ", "NIJ"]
             )
             st.write("📤 Input data:")
             st.dataframe(input_data)
