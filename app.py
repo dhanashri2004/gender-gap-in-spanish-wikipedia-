@@ -70,7 +70,6 @@ elif selected == "Visualization":
             st.warning("⚠️ No numeric columns available.")
     else:
         st.warning("⚠️ Dataset not loaded.")
-
 # === Predict Gender Page ===
 elif selected == "Predict Gender":
     st.title("🎯 Predict Gender")
@@ -114,16 +113,16 @@ elif selected == "Predict Gender":
             st.write("📤 Input data:")
             st.dataframe(input_data)
 
-          # Predict encoded gender
-prediction = model.predict(input_data)[0]
+            # Predict encoded gender
+            prediction = model.predict(input_data)[0]
 
-# Manual decode if label encoder used numeric values
-gender_map = {0: "Female", 1: "Male"}
-decoded_gender = gender_map.get(prediction, "Unknown")
+            # Manual decode if label encoder used numeric values
+            gender_map = {0: "Female", 1: "Male"}
+            decoded_gender = gender_map.get(prediction, "Unknown")
 
-# Display result
-st.success(f"🧠 Predicted Gender: **{decoded_gender}**")
-
+            # Display result
+            st.success(f"🧠 Predicted Gender: **{decoded_gender}**")
 
     except Exception as e:
         st.error(f"⚠️ Prediction failed: {e}")
+
