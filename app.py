@@ -12,7 +12,7 @@ st.set_page_config(page_title="Gender Predictor", layout="centered")
 try:
     model = joblib.load('model.pkl')
     c_api_encoder = joblib.load('c_api_encoder.pkl')
-    label_encoder = joblib.load('label_encoder.pkl')  # For decoding prediction
+    # label_encoder = joblib.load('label_encoder.pkl')  # Not needed
 except Exception as e:
     st.error(f"⚠️ Failed to load model or encoder: {e}")
     st.stop()
@@ -70,6 +70,7 @@ elif selected == "Visualization":
             st.warning("⚠️ No numeric columns available.")
     else:
         st.warning("⚠️ Dataset not loaded.")
+
 # === Predict Gender Page ===
 elif selected == "Predict Gender":
     st.title("🎯 Predict Gender")
@@ -125,4 +126,3 @@ elif selected == "Predict Gender":
 
     except Exception as e:
         st.error(f"⚠️ Prediction failed: {e}")
-
