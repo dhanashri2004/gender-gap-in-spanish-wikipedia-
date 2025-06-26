@@ -18,7 +18,8 @@ except Exception as e:
 # === Load dataset if available ===
 try:
     # Use this for local development
-    df = pd.read_csv("C:\\Users\\ASUS\\OneDrive\\Desktop\\Activity_ml\\streamlit_\\data.csv")
+   df = pd.read_csv("data.csv")
+
     
     # Use this instead for Streamlit Cloud:
     # df = pd.read_csv("data.csv")
