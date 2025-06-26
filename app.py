@@ -17,8 +17,11 @@ except Exception as e:
 
 # === Load dataset if available ===
 try:
-df = pd.read_csv("C:\\Users\\ASUS\\OneDrive\\Desktop\\Activity_ml\\streamlit_\\data.csv")
-
+    # Use this for local development
+    df = pd.read_csv("C:\\Users\\ASUS\\OneDrive\\Desktop\\Activity_ml\\streamlit_\\data.csv")
+    
+    # Use this instead for Streamlit Cloud:
+    # df = pd.read_csv("data.csv")
 except Exception as e:
     st.warning("⚠️ Dataset not loaded. You can still use prediction.")
     df = None
