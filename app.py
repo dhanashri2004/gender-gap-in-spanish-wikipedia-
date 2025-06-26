@@ -7,7 +7,7 @@ from streamlit_option_menu import option_menu
 
 st.set_page_config(page_title="Gender Predictor", layout="centered")
 
-# === Load model and encoder ===
+# === Load model and encoders ===
 try:
     model = joblib.load('model.pkl')
     c_api_encoder = joblib.load('c_api_encoder.pkl')
@@ -15,14 +15,9 @@ except Exception as e:
     st.error(f"⚠️ Failed to load model or encoder: {e}")
     st.stop()
 
-# === Load dataset if available ===
+# === Load dataset ===
 try:
-    # Use this for local development
-   df = pd.read_csv("data.csv")
-
-    
-    # Use this instead for Streamlit Cloud:
-    # df = pd.read_csv("data.csv")
+    df = pd.read_csv("data.csv")
 except Exception as e:
     st.warning("⚠️ Dataset not loaded. You can still use prediction.")
     df = None
@@ -82,23 +77,37 @@ elif selected == "Predict Gender":
     st.title("🎯 Predict Gender")
 
     try:
-        # Input form
         with st.form("prediction_form"):
             api_input = st.selectbox("API", c_api_encoder.classes_)
             clicks = st.number_input("Number of Clicks", min_value=0, step=1)
             time_spent = st.number_input("Time Spent (seconds)", min_value=0.0, step=1.0)
+            c_man = st.selectbox("C_man", ["Yes", "No"])
+            e_bpag = st.selectbox("E_Bpag", ["Yes", "No"])
+            e_neds = st.selectbox("E_NEDs", ["Yes", "No"])
+            n_act_days = st.number_input("NActDays", min_value=0, step=1)
+            c_api = st.selectbox("C_api", ["Yes", "No"])  # Add this if it's separate from API
+
             submit_btn = st.form_submit_button("Predict")
 
         if submit_btn:
             encoded_api = c_api_encoder.transform([api_input])[0]
-            input_data = pd.DataFrame(
-                [[encoded_api, clicks, time_spent]],
-                columns=["API", "Clicks", "Time"]
-            )
+
+            input_data = pd.DataFrame([{
+                "API": encoded_api,
+                "Clicks": clicks,
+                "Time": time_spent,
+                "C_api": 1 if c_api == "Yes" else 0,
+                "C_man": 1 if c_man == "Yes" else 0,
+                "E_Bpag": 1 if e_bpag == "Yes" else 0,
+                "E_NEDs": 1 if e_neds == "Yes" else 0,
+                "NActDays": n_act_days
+            }])
+
             st.write("📤 Input data:")
             st.dataframe(input_data)
 
             prediction = model.predict(input_data)[0]
             st.success(f"🧠 Predicted Gender: `{prediction}`")
+
     except Exception as e:
         st.error(f"⚠️ Prediction failed: {e}")
