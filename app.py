@@ -98,40 +98,38 @@ elif selected == "Predict Gender":
         ns_content = st.number_input("ns_content", min_value=0, step=1)
 
         submit_btn = st.form_submit_button("Predict")
-if submit_btn:
-    try:
-        encoded_api = c_api_encoder.transform([api_input])[0]
 
-        input_data = pd.DataFrame([{
-            "C_api": encoded_api,
-            "C_man": int(c_man),
-            "E_NEds": int(e_neds),
-            "E_Bpag": int(e_bpag),
-            "NEds": neds,
-            "NDays": ndays,
-            "NActDays": nactdays,
-            "NPages": npages,
-            "NPcreated": npcreated,
-            "pagesWomen": pages_women,
-            "wikiprojWomen": proj_women,
-            "ns_user": ns_user,
-            "ns_wikipedia": ns_wiki,
-            "ns_talk": ns_talk,
-            "ns_userTalk": ns_userTalk,
-            "ns_content": ns_content,
-            "weightIJ": weightij,
-            "NIJ": nij
-        }])
+    if submit_btn:
+        try:
+            encoded_api = c_api_encoder.transform([api_input])[0]
 
-        st.subheader("📥 Input Data")
-        st.dataframe(input_data)
+            input_data = pd.DataFrame([{
+                "C_api": encoded_api,
+                "C_man": int(c_man),
+                "E_NEds": int(e_neds),
+                "E_Bpag": int(e_bpag),
+                "NEds": neds,
+                "NDays": ndays,
+                "NActDays": nactdays,
+                "NPages": npages,
+                "NPcreated": npcreated,
+                "pagesWomen": pages_women,
+                "wikiprojWomen": proj_women,
+                "ns_user": ns_user,
+                "ns_wikipedia": ns_wiki,
+                "ns_talk": ns_talk,
+                "ns_userTalk": ns_userTalk,
+                "ns_content": ns_content,
+                "weightIJ": weightij,
+                "NIJ": nij
+            }])
 
-        # ✅ Decode predicted gender
+            st.subheader("📥 Input Data")
+            st.dataframe(input_data)
 
-        prediction = model.predict(input_data)[0]
-decoded_gender = label_encoder.inverse_transform([prediction])[0]
-st.success(f"🧠 Predicted Gender: **{decoded_gender}**")
+            prediction = model.predict(input_data)[0]
+            decoded_gender = label_encoder.inverse_transform([prediction])[0]
+            st.success(f"🧠 Predicted Gender: **{decoded_gender}**")
 
-
-    except Exception as e:
-        st.error(f"⚠️ Prediction failed: {e}")
+        except Exception as e:
+            st.error(f"⚠️ Prediction failed: {e}")
