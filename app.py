@@ -7,12 +7,13 @@ from streamlit_option_menu import option_menu
 
 st.set_page_config(page_title="Gender Predictor", layout="centered")
 
-# === Load model and encoder ===
+# === Load model and encoders ===
 try:
     model = joblib.load("model.pkl")
     c_api_encoder = joblib.load("c_api_encoder.pkl")
+    label_encoder = joblib.load("label_encoder.pkl")
 except Exception as e:
-    st.error(f"⚠️ Failed to load model or encoder: {e}")
+    st.error(f"⚠️ Failed to load model or encoders: {e}")
     st.stop()
 
 # === Load dataset ===
@@ -36,7 +37,7 @@ with st.sidebar:
 if selected == "Home":
     st.title("👋 Welcome to the Gender Prediction App")
     st.write("""
-        This app predicts a user's gender based on interaction data.
+        This app predicts a user's gender based on Wikipedia edit behavior.
 
         📊 Explore Data  
         📈 Visualize Trends  
@@ -75,45 +76,43 @@ elif selected == "Predict Gender":
     st.title("🎯 Predict Gender")
 
     with st.form("prediction_form"):
-        # Encoded field
-        api_input = st.selectbox("API", c_api_encoder.classes_)
+        api_input = st.selectbox("C_api (User Language)", c_api_encoder.classes_)
+        c_man = st.selectbox("C_man (Manual Curation)", ["0", "1", "2", "3"])
+        e_neds = st.selectbox("E_NEds (Education Sessions)", ["0", "1", "2", "3"])
+        e_bpag = st.selectbox("E_Bpag (Blog Pages)", ["0", "1", "2", "3"])
 
-        # Numeric fields
-        clicks = st.number_input("Number of Clicks", min_value=0, step=1)
-        time_spent = st.number_input("Time Spent (seconds)", min_value=0.0, step=1.0)
-        n_act_days = st.number_input("Number of Active Days", min_value=0, step=1)
+        neds = st.number_input("NEds (Number of Edits)", min_value=0, step=1)
+        ndays = st.number_input("NDays (Total Days Active)", min_value=0, step=1)
+        nactdays = st.number_input("NActDays (Active Days)", min_value=0, step=1)
+        npcreated = st.number_input("NPcreated (Pages Created)", min_value=0, step=1)
+        nij = st.number_input("NIJ (Index)", min_value=0, step=1)
+        weightij = st.number_input("WeightIJ", min_value=0.0, step=0.01)
 
-        # Binary feature inputs
-        c_api = st.selectbox("C_api", ["Yes", "No"])
-        c_man = st.selectbox("C_man", ["Yes", "No"])
-        e_bpag = st.selectbox("E_Bpag", ["Yes", "No"])
-        e_neds = st.selectbox("E_NEds", ["Yes", "No"])
-
-        # Submit
         submit_btn = st.form_submit_button("Predict")
 
     if submit_btn:
         try:
             encoded_api = c_api_encoder.transform([api_input])[0]
 
-            # Create input DataFrame matching model's expected structure
             input_data = pd.DataFrame([{
-                "API": encoded_api,
-                "Clicks": clicks,
-                "Time": time_spent,
-                "C_api": 1 if c_api == "Yes" else 0,
-                "C_man": 1 if c_man == "Yes" else 0,
-                "E_Bpag": 1 if e_bpag == "Yes" else 0,
-                "E_NEds": 1 if e_neds == "Yes" else 0,
-                "NActDays": n_act_days
+                "C_api": encoded_api,
+                "C_man": int(c_man),
+                "E_NEds": int(e_neds),
+                "E_Bpag": int(e_bpag),
+                "NEds": neds,
+                "NDays": ndays,
+                "NActDays": nactdays,
+                "NPcreated": npcreated,
+                "NIJ": nij,
+                "weightIJ": weightij
             }])
 
             st.subheader("📥 Input Data")
             st.dataframe(input_data)
 
-            # Predict
             prediction = model.predict(input_data)[0]
-            st.success(f"🧠 Predicted Gender: `{prediction}`")
+            decoded_gender = label_encoder.inverse_transform([prediction])[0]
+            st.success(f"🧠 Predicted Gender: **{decoded_gender}**")
 
         except Exception as e:
             st.error(f"⚠️ Prediction failed: {e}")
