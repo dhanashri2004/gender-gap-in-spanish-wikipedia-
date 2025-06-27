@@ -84,9 +84,18 @@ elif selected == "Predict Gender":
         neds = st.number_input("NEds (Number of Edits)", min_value=0, step=1)
         ndays = st.number_input("NDays (Total Days Active)", min_value=0, step=1)
         nactdays = st.number_input("NActDays (Active Days)", min_value=0, step=1)
+        npages = st.number_input("NPages", min_value=0, step=1)
         npcreated = st.number_input("NPcreated (Pages Created)", min_value=0, step=1)
         nij = st.number_input("NIJ (Index)", min_value=0, step=1)
         weightij = st.number_input("WeightIJ", min_value=0.0, step=0.01)
+        pages_women = st.number_input("pagesWomen", min_value=0, step=1)
+        proj_women = st.number_input("wikiprojWomen", min_value=0, step=1)
+
+        ns_user = st.number_input("ns_user", min_value=0, step=1)
+        ns_wiki = st.number_input("ns_wikipedia", min_value=0, step=1)
+        ns_talk = st.number_input("ns_talk", min_value=0, step=1)
+        ns_userTalk = st.number_input("ns_userTalk", min_value=0, step=1)
+        ns_content = st.number_input("ns_content", min_value=0, step=1)
 
         submit_btn = st.form_submit_button("Predict")
 
@@ -102,9 +111,17 @@ elif selected == "Predict Gender":
                 "NEds": neds,
                 "NDays": ndays,
                 "NActDays": nactdays,
+                "NPages": npages,
                 "NPcreated": npcreated,
-                "NIJ": nij,
-                "weightIJ": weightij
+                "pagesWomen": pages_women,
+                "wikiprojWomen": proj_women,
+                "ns_user": ns_user,
+                "ns_wikipedia": ns_wiki,
+                "ns_talk": ns_talk,
+                "ns_userTalk": ns_userTalk,
+                "ns_content": ns_content,
+                "weightIJ": weightij,
+                "NIJ": nij
             }])
 
             st.subheader("📥 Input Data")
