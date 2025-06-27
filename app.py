@@ -127,9 +127,11 @@ if submit_btn:
         st.dataframe(input_data)
 
         # ✅ Decode predicted gender
+
         prediction = model.predict(input_data)[0]
-        decoded_gender = label_encoder.inverse_transform([prediction])[0]
-        st.success(f"🧠 Predicted Gender: **{decoded_gender}**")
+decoded_gender = label_encoder.inverse_transform([prediction])[0]
+st.success(f"🧠 Predicted Gender: **{decoded_gender}**")
+
 
     except Exception as e:
         st.error(f"⚠️ Prediction failed: {e}")
